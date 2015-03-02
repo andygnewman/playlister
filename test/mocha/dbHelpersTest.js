@@ -20,40 +20,41 @@ describe("connection and initialization of DB",function(){
     done();
   });
 
-  it('should store some data',function(done){
-
-  });
 });
 
 describe('should add data',function(){
-  
-  var db,ppSpotifyCredentials = {};
+
+  var db,collectionName = {};
 
   beforeEach(function(done){
-    var db = monk('localhost/playlisterTest');
-    var collectionName = db.get('ppSpotifyCredentials');
+    db = monk('localhost/playlisterTest');
+    collectionName = db.get('ppSpotifyCredentials');
+    done();
   });
 
   after(function(done){
-    monk('localhost/playlisterTest')
-    .get('ppSpotifyCredentials')
-    .drop(function(err){
+    // monk('localhost/playlisterTest')
+    // .get('ppSpotifyCredentials')
+    console.log('DB: ' + db);
+    console.log('Collection Name; ' + collectionName);
+    db.collectionName.drop(function(err){
       if(err) return done(err);
     });
     done();
   });
 
-  it('should save and read data',function(){
+  it('should save and read data',function(done){
+    var db = monk('localhost/playlisterTest');
+    var collectionName = db.get('ppSpotifyCredentials');
     var collectionObject = {spotifyID:"nameTest",spotifyAccessToken:'9999',
                         spotifyRefreshToken:'8888'};
-
-    helpersDB.saveToDatabase(db,collectionName,collectionObject);
-    var collection = db.get(collectionName);                   
-    var element = collection.find();
-    elemet.should.have.property('_id','spotifyID',
-                                'spotifyAccessToken','spotifyRefreshToken');
-
+    helpersDB.saveToDatabase(db, collectionName, collectionObject).
+      then(collectionName.findOne({}, function(err, doc){
+      if (err) return done(err);
+      console.log(doc);
+      should.exists(doc);
+      done();
+    }));
   });
-
 
 });
